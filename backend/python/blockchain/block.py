@@ -80,9 +80,14 @@ class Block:
     and satisfy the difficulty
     """
     nonce = 0
-    difficulty = Block.adjust_difficulty(last_block, time.time_ns())
+    last_hash = last_block.last_hash
     while True:
-      
+      timestamp = time.time_ns()
+      difficulty = Block.adjust_difficulty(last_block, timestamp)
+      hash = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
+      if hex_to_binary(hash)[0:difficulty] == '0' * difficulty:
+        return Block(timestamp, last_hash, hash, data, difficulty, nonce)
+      nonce += 1
 
   @staticmethod
   def block_is_valid(last_block, block):
@@ -92,4 +97,13 @@ class Block:
         difficulty with the hash,
         difference between difficulties no more than 1
         recalculate the hash
+      
     """
+    if block.last_hash != last_block.hash:
+      raise Exception("The block's last_hash must be correct")
+    if hex_to_binary(block.hash)[0:block.difficulty] != '0' * block.difficulty:
+      raise Exception("The POW requirement is not met")
+    if abs(block.difficulty - last_block.difficulty) > 1:
+      raise Exception("The block's difficulty must only adjust by 1")
+    if block.hash != crypto_hash(block.timestamp, block.last_hash, block.data, block.difficulty, block.nonce):
+      raise Exception("The block's hash must be correct")
