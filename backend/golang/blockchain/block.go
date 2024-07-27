@@ -25,13 +25,14 @@ func GenesisBlock() Block {
 		LastHash: "genesis_last_hash",
 		Hash: "genesis_hash",
 		Data: "genesis_data",
-		Difficulty: 1,
+		Difficulty: 3,
 		Nonce: 0,
 	}
 }
 
 // compare two milliseconds
 func AdjustDifficulty(last_block Block, timestamp int64) int {
+	//used to many time
 	if timestamp - last_block.Timestamp < utils.MineRate {
 		return last_block.Difficulty + 1
 	}
@@ -41,8 +42,9 @@ func AdjustDifficulty(last_block Block, timestamp int64) int {
 	return last_block.Difficulty - 1
 }
 func Mine(last_block Block, data string) (*Block, error) {
-	last_hash := last_block.LastHash
+	last_hash := last_block.Hash
 	nonce := last_block.Nonce
+	//fmt.Printf("last_timestamp: %v\n", last_block.Timestamp)
 	for {
 		timestamp := time.Now().UnixMilli()
 		difficulty := AdjustDifficulty(last_block, timestamp)
@@ -51,6 +53,7 @@ func Mine(last_block Block, data string) (*Block, error) {
 			log.Fatal(err)
 		}
 		if utils.Hex_to_binary(hash)[0:difficulty] == strings.Repeat("0", difficulty) {
+			//fmt.Printf("timestamp: %v\n", timestamp)
 			return &Block {
 				Timestamp: timestamp,
 				LastHash: last_hash,

@@ -6,7 +6,7 @@ const GENESIS_DATA = {
 import { crypto_hash } from "../utils/crypto_hash";
 import { hex_to_binary } from "../utils/hex_to_binary";
 import { MINE_RATE } from "../config";
-class Block {
+export class Block {
   timestamp!: number;
   lastHash!: string;
   hash!: string;
@@ -35,7 +35,7 @@ class Block {
   }
 
   static adjustDifficulty(last_block: Block, timestamp: number) {
-    if (timestamp - last_block.timestamp > MINE_RATE) {
+    if (timestamp - last_block.timestamp < MINE_RATE) {
       return last_block.difficulty + 1;
     }
     if (last_block.difficulty == 1) {
@@ -88,7 +88,7 @@ class Block {
 }
 //const s = Array(6).join("0");
 //console.log(s, s.substring(0, 3));
-
+/*
 const block = Block.getGenesisBlock();
 console.log(block);
 const block2 = Block.getGenesisBlock();
@@ -101,3 +101,4 @@ if (JSON.stringify(block) === JSON.stringify(block2)) {
 const b = Block.mine(block, { data: "mined" });
 b.difficulty = 2;
 console.log("mined:", Block.blockIsValid(block, b));
+*/
