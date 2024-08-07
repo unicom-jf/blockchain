@@ -1,3 +1,3 @@
-module github.com/unicom-jf/blockchain/backend/golang/utils
+module utils/golang/backend/blockchain/unicom-jf/github.com
 
 go 1.22.0
