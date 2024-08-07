@@ -7,7 +7,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/google/uuid"
-	"soho.net/blockchain/blockchain"
+	"github.com/unicom-jf/blockchain/backend/golang/blockchain"
 )
 type Wallet struct {
 	BlockChain blockchain.BlockChain

@@ -10,8 +10,8 @@ import (
 	"log"
 	"time"
 
-	"soho.net/blockchain/utils"
-	"soho.net/blockchain/wallet"
+	"github.com/unicom-jf/blockchain/backend/golang/utils"
+	"github.com/unicom-jf/blockchain/backend/golang/wallet"
 )
 
 func utilsFunc() {
