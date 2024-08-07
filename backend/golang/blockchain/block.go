@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"soho.net/blockchain/utils"
+	"github.com/unicom-jf/blockchain/tree/main/backend/golang/utils"
 )
 type Block struct {
 	Timestamp int64 `json:"timestamp"`
