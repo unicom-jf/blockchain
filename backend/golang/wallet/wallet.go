@@ -7,10 +7,10 @@ import (
 	"crypto/sha256"
 
 	"github.com/google/uuid"
-	//"github.com/unicom-jf/blockchain/backend/golang/blockchain"
+	"github.com/unicom-jf/blockchain/backend/golang/blockchain"
 )
 type Wallet struct {
-	//BlockChain blockchain.BlockChain
+	BlockChain blockchain.BlockChain
 	Address string
 	PrivateKey *rsa.PrivateKey
 	PublicKey rsa.PublicKey
@@ -40,7 +40,7 @@ func NewWallet() (*Wallet, error){
 		return nil, err
 	}
 	return &Wallet{
-		//blockchain.BlockChain {},
+		blockchain.BlockChain {},
 		uuid.New().String()[0:8],
 		privateKey,
 		privateKey.PublicKey,
