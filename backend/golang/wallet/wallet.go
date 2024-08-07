@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/unicom-jf/blockchain/backend/golang/blockchain"
+	"github.com/unicom-jf/blockchain/backend/golang/utils"
 )
 type Wallet struct {
 	BlockChain blockchain.BlockChain
@@ -44,7 +45,18 @@ func NewWallet() (*Wallet, error){
 		uuid.New().String()[0:8],
 		privateKey,
 		privateKey.PublicKey,
-		0,
+		uint64(utils.StartingBalance),
 	}, nil
 
+}
+
+func Verify(public_key rsa.PublicKey, data []byte, signature []byte) error {
+	msgHash := sha256.New()
+	_, err := msgHash.Write(data)
+	if err != nil {
+		return err
+	}
+	msgHashSum := msgHash.Sum(nil)
+	err = rsa.VerifyPSS(&public_key, crypto.SHA256, msgHashSum, signature, nil)
+	return err
 }

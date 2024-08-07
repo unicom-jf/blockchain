@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"testing"
-	//"github.com/unicom-jf/blockchain/backend/golang/wallet"
 )
 
 func TestVerify(t *testing.T) {
@@ -46,4 +45,10 @@ func TestVerify(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = Verify(wallet.PublicKey, data, sig)
+	if err != nil {
+		t.Errorf("Verify err: %v\n", err)
+	}
+		
 }
