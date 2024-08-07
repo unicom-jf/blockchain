@@ -9,13 +9,11 @@ import (
 	"fmt"
 
 	"testing"
-
-	"github.com/unicom-jf/blockchain/backend/golang/wallet"
 	//"github.com/unicom-jf/blockchain/backend/golang/wallet"
 )
 
 func TestVerify(t *testing.T) {
-	wallet, err := wallet.NewWallet()
+	wallet, err := NewWallet()
 	if err != nil {
 		t.Error(err)
 	}
