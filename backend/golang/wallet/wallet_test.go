@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/unicom-jf/blockchain/backend/golang/wallet"
+	//"github.com/unicom-jf/blockchain/backend/golang/wallet"
 )
 
 func TestVerify(t *testing.T) {
