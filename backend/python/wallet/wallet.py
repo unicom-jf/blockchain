@@ -96,5 +96,5 @@ def main():
   should_be_invalid = Wallet.verify(Wallet().public_key, data, signature)
   print(f'ok: {should_be_invalid}')
 
-if __name__ == '__main__':
-  main()
+# if __name__ == '__main__':
+#   main()

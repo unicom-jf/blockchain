@@ -12,22 +12,25 @@ type TxInput = {
   signature?: string;
 };
 
+/*
 type TxOutput = {
   receiveAddress: string;
   receiveAmount: number;
   sourceAddress?: string;
   sourceBalance?: number; // sourceWallet.balance - receiveAmount
 };
+*/
 class Transaction {
   private _id: string;
   private _txInput: TxInput | undefined;
-  private _txOutput: TxOutput | undefined;
+  private _txOutput: Map<string, bigint> | undefined;
   constructor(
     sender_wallet: Wallet | undefined,
     receive_address: string | undefined,
     receive_amount: number | undefined,
     txInput: TxInput | undefined,
-    txOutput: TxOutput | undefined
+    //txOutput: TxOutput | undefined
+    txOutput: Map<string, bigint> | undefined
   ) {
     this._id = uuidv4().substring(0, 8);
     if (txOutput === undefined) {
@@ -67,32 +70,42 @@ class Transaction {
     if (receive_amount! > sender_wallet!.balance) {
       throw new Error("out of balance.");
     }
+
+    this._txOutput = new Map<string, bigint>();
+    this._txOutput.set(receive_address!, BigInt(receive_amount!));
+    this._txOutput.set(
+      sender_wallet?.address!,
+      BigInt(sender_wallet!.balance - receive_amount!)
+    );
     // let balance = sender_wallet.balance;
     // if (receive_address !== MINING_REWARD_INPUT["address"]) {
     //   balance = sender_wallet.balance - receive_amount;
     // }
+    /*
     this._txOutput = {
       receiveAddress: receive_address!,
       receiveAmount: receive_amount!,
       sourceAddress: sender_wallet!.address,
       sourceBalance: sender_wallet!.balance - receive_amount!,
     };
+    */
   }
   /*
    * Validate a tx
    * throw exception if invalid
    */
   static validTx(tx: Transaction) {
+    let total = BigInt("0");
+    for (const key of tx.txOutput!.keys()) {
+      total = total + tx._txOutput!.get(key)!;
+    }
     if (tx.txInput!["address"] === MINING_REWARD_INPUT) {
-      if (tx.txOutput!["receiveAmount"] != MINING_REWARD) {
+      if (total != BigInt(MINING_REWARD)) {
         throw "Invalid mining reward";
       }
       return;
     }
-    if (
-      tx.txOutput!["receiveAmount"] + tx.txOutput!["sourceBalance"]! !=
-      tx.txInput!["amount"]
-    ) {
+    if (total != BigInt(tx.txInput!["amount"]!)) {
       throw "Invalid output values";
     }
 
@@ -113,10 +126,8 @@ class Transaction {
     const txInput: TxInput = {
       address: MINING_REWARD_INPUT,
     };
-    const txOutput: TxOutput = {
-      receiveAddress: miner.address,
-      receiveAmount: MINING_REWARD,
-    };
+    let txOutput = new Map<string, bigint>();
+    txOutput.set(miner.address!, BigInt(MINING_REWARD));
     return new Transaction(undefined, undefined, undefined, txInput, txOutput);
   }
   public get txInput() {
@@ -127,19 +138,21 @@ class Transaction {
   }
 }
 
-export { Transaction, TxInput, TxOutput };
+export { Transaction, TxInput };
 
 function test() {
   const blockchain = new BlockChain();
   const wallet = new Wallet(blockchain);
   const rewardTx = Transaction.rewardTransaction(wallet);
   console.log("rewardTx: ", rewardTx);
-  rewardTx.txOutput!["receiveAmount"] = 1;
+
+  //rewardTx.txOutput!["receiveAmount"] = 1;
   let txInput, txOutput;
   let tx = new Transaction(wallet, "receipt", 15, txInput, txOutput);
   console.log("tx: ", tx);
-  tx.txOutput!["receiveAddress"] = "111";
-  //Transaction.validTx(tx);
+  //tx.txOutput!["receiveAddress"] = "111";
+  Transaction.validTx(tx);
+
   Transaction.validTx(rewardTx);
 }
 

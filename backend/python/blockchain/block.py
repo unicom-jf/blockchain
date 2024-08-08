@@ -1,8 +1,8 @@
 import time
 
-from backend.config import MINE_RATE
-from backend.utils.crypto_hash import crypto_hash
-from backend.utils.hex_to_binary import hex_to_binary
+from python.config import MINE_RATE
+from python.utils.crypto_hash import crypto_hash
+from python.utils.hex_to_binary import hex_to_binary
 
 GENESIS_DATA = {
   'timestamp': 1,
@@ -80,7 +80,7 @@ class Block:
     and satisfy the difficulty
     """
     nonce = 0
-    last_hash = last_block.last_hash
+    last_hash = last_block.hash
     while True:
       timestamp = time.time_ns()
       difficulty = Block.adjust_difficulty(last_block, timestamp)

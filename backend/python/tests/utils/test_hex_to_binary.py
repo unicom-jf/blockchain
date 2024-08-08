@@ -1,4 +1,4 @@
-from utils.hex_to_binary import hex_to_binary
+from python.utils.hex_to_binary import hex_to_binary
 def test_hex_to_binary():
   """
   num1 -> hex_str -> bin_str -> num2

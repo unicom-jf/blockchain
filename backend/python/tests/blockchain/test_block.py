@@ -1,9 +1,9 @@
-from backend.blockchain.block import Block
+from python.blockchain.block import Block
 
 def test_mine_block():
-  genessis_block = Block.genessis()
+  genesis_block = Block.genesis_block()
   data = 'block_data'
-  block = Block.mine_block(genessis_block, data)
+  block = Block.mine_block(genesis_block, data)
   
-  Block.is_valid_block(genessis_block, block)
+  Block.block_is_valid(genesis_block, block)
   assert(block.data == data)

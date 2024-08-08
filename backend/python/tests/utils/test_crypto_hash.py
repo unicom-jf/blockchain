@@ -1,4 +1,4 @@
-from utils.crypto_hash import crypto_hash
+from python.utils.crypto_hash import crypto_hash
 
 def test_crypto_hash():
   """
