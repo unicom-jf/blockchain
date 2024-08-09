@@ -1,7 +1,7 @@
-from backend.blockchain.block import Block
-from backend.wallet.wallet import Wallet
-from backend.wallet.transaction import Transaction
-from backend.config import MINING_REWARD_INPUT
+from python.blockchain.block import Block
+from python.wallet.wallet import Wallet
+from python.wallet.transaction import Transaction
+from python.config import MINING_REWARD_INPUT
 
 class Blockchain:
   """
@@ -9,7 +9,7 @@ class Blockchain:
   Implemented as a list of blocks( data sets of transactions)
   """
   def __init__(self) -> None:
-    self.chain = [Block.genessis()]
+    self.chain = [Block.genesis_block()]
   
   def add_block(self, data):
     self.chain.append(Block.mine_block(self.chain[-1], data))
@@ -54,7 +54,7 @@ class Blockchain:
     the chain must start with the genesis block
     blocks must be formatted correctly
     """
-    if chain[0] != Block.genessis():
+    if chain[0] != Block.genesis_block():
       raise Exception('The genesis block must be valid')
     
     for i in range(1, len(chain)):
@@ -97,9 +97,25 @@ class Blockchain:
 
 def main():
   blockchain = Blockchain()
-  blockchain.add_block('one')        
-  blockchain.add_block('two')     
-  print(blockchain)
+  # blockchain.add_block('one')        
+  # blockchain.add_block('two')     
+  # print(blockchain)
+
+  wallet = Wallet()
+  wallet.blockchain = blockchain
+  print(f'balance: {wallet.balance}')
+  tx = Transaction.reward_tx(wallet)
+  #reward_block = Block.mine_block(wallet.blockchain.chain[-1], tx.to_json())
+  wallet.blockchain.add_block([tx.to_json()])
+  print(f'balance with rewarding: {wallet.balance}')
+  client_wallet = Wallet()
+  tx = Transaction(client_wallet, wallet.address, 123)
+  wallet.blockchain.add_block([tx.to_json()])
+  print(f'balance with transfer: {wallet.balance}')
+
+  tx = Transaction(wallet, client_wallet.address, 200)
+  wallet.blockchain.add_block([tx.to_json()])
+  print(f'balance after payment: {wallet.balance}')
 
 if __name__ == '__main__':
   main()

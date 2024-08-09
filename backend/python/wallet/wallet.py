@@ -10,7 +10,10 @@ from cryptography.hazmat.primitives.asymmetric.utils import (
   encode_dss_signature
 )
 
-from backend.config import STARTING_BALANCE, MINING_REWARD, MINING_REWARD_INPUT
+from python.config import STARTING_BALANCE, MINING_REWARD, MINING_REWARD_INPUT
+# from python.blockchain.block import Block
+# from python.blockchain.blockchain import Blockchain
+# from python.wallet.transaction import Transaction
 
 class Wallet:
   """
@@ -36,6 +39,8 @@ class Wallet:
     
     for block in blockchain.chain:
       for transaction in block.data:
+        #print(f'transaction: {transaction}')
+        # tx = Transaction.from_json(transaction)
         if transaction['input']['address'] == address:
           ##?
           balance = transaction['output'][address] 
@@ -95,6 +100,14 @@ def main():
   print(f'ok: {should_be_valid}')
   should_be_invalid = Wallet.verify(Wallet().public_key, data, signature)
   print(f'ok: {should_be_invalid}')
+  
+  # blockchain = Blockchain()
+  # wallet.blockchain = blockchain
+  # print(f'balance: {wallet.balance}')
+  # tx = Transaction.reward_tx()
+  # reward_block = Block.mine_block(wallet.blockchain.chain[-1], tx.to_json())
+  # wallet.blockchain.add_block(reward_block)
+  # print(f'balance with rewarding: {wallet.balance}')
 
-# if __name__ == '__main__':
-#   main()
+if __name__ == '__main__':
+  main()

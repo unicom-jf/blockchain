@@ -10,7 +10,7 @@ export class Block {
   timestamp!: number;
   lastHash!: string;
   hash!: string;
-  data!: object;
+  data!: any[];
   difficulty!: number;
   nonce!: number;
 
@@ -18,7 +18,7 @@ export class Block {
     timestamp: number,
     last_hash: string,
     hash: string,
-    data: object,
+    data: any[],
     difficulty: number,
     nonce: number
   ) {
@@ -31,7 +31,7 @@ export class Block {
   }
 
   static getGenesisBlock() {
-    return new Block(0, "last_hash", "hash", { data: "data" }, 3, 0);
+    return new Block(0, "last_hash", "hash", [], 3, 0);
   }
 
   static adjustDifficulty(last_block: Block, timestamp: number) {
@@ -43,7 +43,7 @@ export class Block {
     }
     return last_block.difficulty - 1;
   }
-  static mine(last_block: Block, data: object) {
+  static mine(last_block: Block, data: any[]) {
     let nonce = 0;
     let last_hash = last_block.hash;
     while (true) {

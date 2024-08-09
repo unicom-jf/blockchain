@@ -2,8 +2,8 @@
 import time
 import uuid
 
-from backend.config import MINING_REWARD_INPUT, MINING_REWARD
-from backend.wallet.wallet import Wallet
+from python.config import MINING_REWARD_INPUT, MINING_REWARD
+from python.wallet.wallet import Wallet
 
 class Transaction:
   """
@@ -92,12 +92,15 @@ def main():
   tx = Transaction.reward_tx(wallet)
   print(f'tx: {tx.__dict__}')
 
+  tx = Transaction(wallet, 'receipt', 123)
+  print(f'tx: {tx.__dict__}')
+
   try:
-    tx.output[wallet.address] = 1
+    #tx.output[wallet.address] = 1
     Transaction.is_valid_tx(tx)
     print(f'is_valid: true')
   except Exception as e:
     print(e)
 
-# if __name__ == '__main__':
-#   main()
+if __name__ == '__main__':
+  main()
