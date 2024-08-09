@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 func Crypto_hash(args ...string) (string, error) {
+//func Crypto_hash(args ...[]byte) (string, error) {
 	s := ""
 	for _, i := range args {
 		s += i

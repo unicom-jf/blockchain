@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
@@ -9,12 +10,14 @@ import (
 	"time"
 
 	"github.com/unicom-jf/blockchain/backend/golang/utils"
+
 )
 type Block struct {
 	Timestamp int64 `json:"timestamp"`
 	LastHash string `json:"lastHash"`
 	Hash string `json:"hash"`
-	Data string `json:"data"`
+	//Data string `json:"data"`
+	Data [][]byte `json:"data"`
 	Difficulty int `json:"difficulty"`
 	Nonce int `json:"nonce"`
 }
@@ -24,7 +27,7 @@ func GenesisBlock() Block {
 		Timestamp: 0, //milli seconds
 		LastHash: "genesis_last_hash",
 		Hash: "genesis_hash",
-		Data: "genesis_data",
+		Data: [][]byte{},
 		Difficulty: 3,
 		Nonce: 0,
 	}
@@ -41,20 +44,25 @@ func AdjustDifficulty(last_block Block, timestamp int64) int {
 	}
 	return last_block.Difficulty - 1
 }
-func Mine(last_block Block, data string) (*Block, error) {
+func Mine(last_block Block, data [][]byte) (Block, error) {
 	last_hash := last_block.Hash
 	nonce := last_block.Nonce
 	//fmt.Printf("last_timestamp: %v\n", last_block.Timestamp)
+	buf, err := json.Marshal(data)
+	if err != nil {
+		return Block{}, err
+	}
 	for {
 		timestamp := time.Now().UnixMilli()
 		difficulty := AdjustDifficulty(last_block, timestamp)
-		hash, err := utils.Crypto_hash(strconv.FormatInt(timestamp, 10), last_hash, data, strconv.Itoa(difficulty), strconv.Itoa(nonce))
+		hash, err := utils.Crypto_hash(strconv.FormatInt(timestamp, 10), 
+			last_hash, string(buf), strconv.Itoa(difficulty), strconv.Itoa(nonce))
 		if err != nil {
 			log.Fatal(err)
 		}
 		if utils.Hex_to_binary(hash)[0:difficulty] == strings.Repeat("0", difficulty) {
 			//fmt.Printf("timestamp: %v\n", timestamp)
-			return &Block {
+			return Block {
 				Timestamp: timestamp,
 				LastHash: last_hash,
 				Hash: hash,
@@ -77,8 +85,9 @@ func BlockIsValid(last_block Block, block Block) error {
 	if math.Abs(float64(block.Difficulty - last_block.Difficulty)) > 1 {
 		return fmt.Errorf("the block's difficulty must only adjust by 1")	
 	}
+	buf, err := json.Marshal(block.Data)
 	hash, err := utils.Crypto_hash(strconv.FormatInt(block.Timestamp, 10), 
-		block.LastHash, block.Data, strconv.Itoa(block.Difficulty), strconv.Itoa(block.Nonce))
+		block.LastHash, string(buf), strconv.Itoa(block.Difficulty), strconv.Itoa(block.Nonce))
 	if err != nil {
 		return err
 	}
