@@ -1,6 +1,8 @@
 package blockchain
 
 import (
+	"encoding/json"
+	"reflect"
 	"strconv"
 	"testing"
 	"time"
@@ -12,11 +14,17 @@ import (
 func TestAdjustDifficulty(t *testing.T) {
 	genesis_block := GenesisBlock()
 	//time.Sleep(time.Duration((utils.MineRate + 1000) * int64(time.Millisecond)))
-	block_1, err := Mine(genesis_block, "block_1")
+	buf := [][]byte {}
+	data := []byte("block_1")
+	buf = append(buf, data)
+	block_1, err := Mine(genesis_block, buf)
 	if err != nil {
 		t.Errorf("%v:\n", err)
 	}
-	block_2, err := Mine(*block_1, "block_2")
+	data = []byte("block_2")
+	buf = [][]byte {}
+	buf = append(buf, data)
+	block_2, err := Mine(block_1, buf)
 	if err != nil {
 		t.Errorf("%v:\n", err)
 	}
@@ -26,7 +34,10 @@ func TestAdjustDifficulty(t *testing.T) {
 	}
 	time.Sleep(time.Duration((utils.MineRate + 1000) * int64(time.Millisecond) ))
 	//should adjust easier
-	block_3, err := Mine(*block_2, "block_3")
+	data = []byte("block_3")
+	buf = [][]byte {}
+	buf = append(buf, data)
+	block_3, err := Mine(block_2, buf)
 	if err != nil {
 		t.Errorf("%v:\n", err)
 	}
@@ -37,17 +48,23 @@ func TestAdjustDifficulty(t *testing.T) {
 
 func TestBlockIsValid(t *testing.T) {
 	genesis := GenesisBlock()
-	data := "block"
-	block, err := Mine(genesis, data)
+	buf := [][]byte {}
+	data := []byte("block_1")
+	buf = append(buf, data) 
+	block, err := Mine(genesis, buf)
 	if err != nil {
 		t.Errorf("%v:\n", err)
 	}
-	if block.Data != data {
+	if string(block.Data[0]) != "block_1" {
 		t.Errorf("block data error: %v\n", block.Data)
 	}
 	
+	json_bytes, err := json.Marshal(buf)
+	if err != nil {
+		t.Error(err)
+	}
 	hash, err := utils.Crypto_hash(strconv.FormatInt(block.Timestamp, 10), 
-		genesis.Hash, data, strconv.Itoa(block.Difficulty), strconv.Itoa(block.Nonce))
+		genesis.Hash, string(json_bytes), strconv.Itoa(block.Difficulty), strconv.Itoa(block.Nonce))
 	
 	if err != nil {
 		t.Errorf("%v:\n", err)
@@ -55,4 +72,15 @@ func TestBlockIsValid(t *testing.T) {
 	if hash != block.Hash {
 		t.Errorf("hash error: %v, %v\n", hash, block.Hash)
 	}
+}
+
+func TestGenesis(t *testing.T) {
+	genesis := GenesisBlock()
+
+	if reflect.TypeOf(genesis).Name() != "Block" {
+		t.Errorf("invalid block type: %v\n", reflect.TypeOf(genesis).Name())
+	}
+
+	
+
 }

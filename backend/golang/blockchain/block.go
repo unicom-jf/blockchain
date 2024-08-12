@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/unicom-jf/blockchain/backend/golang/utils"
-
 )
 type Block struct {
 	Timestamp int64 `json:"timestamp"`
@@ -86,6 +85,9 @@ func BlockIsValid(last_block Block, block Block) error {
 		return fmt.Errorf("the block's difficulty must only adjust by 1")	
 	}
 	buf, err := json.Marshal(block.Data)
+	if err != nil {
+		return err
+	}
 	hash, err := utils.Crypto_hash(strconv.FormatInt(block.Timestamp, 10), 
 		block.LastHash, string(buf), strconv.Itoa(block.Difficulty), strconv.Itoa(block.Nonce))
 	if err != nil {

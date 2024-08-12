@@ -1,6 +1,6 @@
 import assert from "assert";
 
-import { Block } from "../../blockchain/block";
+import { Block, GENESIS_BLOCK } from "../../blockchain/block";
 import { MINE_RATE } from "../../config";
 import { sleep } from "../../utils/tools";
 import { crypto_hash } from "../../utils/crypto_hash";
@@ -37,5 +37,52 @@ describe("Test block", () => {
       block.nonce
     );
     assert(hash === block.hash);
+  });
+
+  describe("test genesis block", () => {
+    const block = Block.getGenesisBlock();
+    assert(block instanceof Block);
+    const keys = Object.keys(block);
+    keys.forEach((key) => {
+      assert(block[key as keyof Block] === GENESIS_BLOCK[key as keyof Block]);
+    });
+  });
+
+  describe("test is_valid_blok", () => {
+    let last_block: Block;
+    let block: Block;
+    beforeEach(() => {
+      last_block = Block.mine(Block.getGenesisBlock(), ["foo"]);
+      block = Block.mine(last_block, ["bar"]);
+    });
+    it("bad lastHash", () => {
+      block.lastHash = "abcdef";
+      assert.throws(
+        () => Block.blockIsValid(last_block, block),
+        /last_hash must be correct/
+      );
+    });
+    it("bad pow", () => {
+      block.hash = "abcdef"; // + block.hash;
+      assert.throws(
+        () => Block.blockIsValid(last_block, block),
+        /The POW requirement is not met/
+      );
+    });
+
+    it("jump difficulty", () => {
+      last_block.difficulty = 100;
+      assert.throws(
+        () => Block.blockIsValid(last_block, block),
+        /difficulty must only adjust by 1/
+      );
+    });
+    it("bad hash", () => {
+      block.hash = block.hash + "123";
+      assert.throws(
+        () => Block.blockIsValid(last_block, block),
+        /hash must be correct/
+      );
+    });
   });
 });

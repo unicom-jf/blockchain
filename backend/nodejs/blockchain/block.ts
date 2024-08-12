@@ -6,9 +6,17 @@ const GENESIS_DATA = {
 import { crypto_hash } from "../utils/crypto_hash";
 import { hex_to_binary } from "../utils/hex_to_binary";
 import { MINE_RATE } from "../config";
-export class Block {
+const GENESIS_BLOCK: Block = {
+  timestamp: 0,
+  lastHash: "last_hash",
+  hash: "hash",
+  data: [],
+  difficulty: 3,
+  nonce: 0,
+};
+class Block {
   timestamp!: number;
-  lastHash!: string;
+  lastHash: string;
   hash!: string;
   data!: any[];
   difficulty!: number;
@@ -31,7 +39,11 @@ export class Block {
   }
 
   static getGenesisBlock() {
-    return new Block(0, "last_hash", "hash", [], 3, 0);
+    const { timestamp, lastHash, hash, data, difficulty, nonce } =
+      GENESIS_BLOCK;
+    return new Block(timestamp, lastHash, hash, data, difficulty, nonce);
+    //return new Block(0, "last_hash", "hash", [], 3, 0);
+    //return GENESIS_BLOCK;
   }
 
   static adjustDifficulty(last_block: Block, timestamp: number) {
@@ -86,19 +98,4 @@ export class Block {
     }
   }
 }
-//const s = Array(6).join("0");
-//console.log(s, s.substring(0, 3));
-/*
-const block = Block.getGenesisBlock();
-console.log(block);
-const block2 = Block.getGenesisBlock();
-if (JSON.stringify(block) === JSON.stringify(block2)) {
-  console.log("ok");
-} else {
-  console.log("failed");
-}
-
-const b = Block.mine(block, { data: "mined" });
-b.difficulty = 2;
-console.log("mined:", Block.blockIsValid(block, b));
-*/
+export { Block, GENESIS_BLOCK };
