@@ -58,7 +58,7 @@ class Blockchain:
       raise Exception('The genesis block must be valid')
     
     for i in range(1, len(chain)):
-      Block.is_valid_block(chain[i - 1], chain[i])
+      Block.block_is_valid(chain[i - 1], chain[i])
 
     Blockchain.is_valid_transaction_chain(chain)
 
@@ -75,7 +75,7 @@ class Blockchain:
       foundReward = False
 
       for tx_json in block.data:
-        tx = Transaction.from_json(tx)
+        tx = Transaction.from_json(tx_json)
         if tx.id in tx_ids:
           raise Exception('Tx {tx.id} is not unique')
         tx_ids.add(tx.id)
@@ -93,7 +93,7 @@ class Blockchain:
           if historic_balance != tx.input['amount']:
             raise Exception(f'tx {tx.id} has an invalid input amount')
         
-        Transaction.is_valid_transaction(tx)
+        Transaction.is_valid_tx(tx)
 
 def main():
   blockchain = Blockchain()
