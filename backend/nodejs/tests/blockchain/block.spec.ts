@@ -4,6 +4,9 @@ import { Block, GENESIS_BLOCK } from "../../blockchain/block";
 import { MINE_RATE } from "../../config";
 import { sleep } from "../../utils/tools";
 import { crypto_hash } from "../../utils/crypto_hash";
+import { Transaction } from "../../wallet/transaction";
+import { Wallet } from "../../wallet/wallet";
+import { Blockchain } from "../../blockchain/blockchain";
 describe("Test block", () => {
   it("TestAdjustDifficulty", async function () {
     //for mocha, default timeout: 2000ms
@@ -26,13 +29,20 @@ describe("Test block", () => {
   });
   it("TestBlockIsValid", () => {
     const genesis_block = Block.getGenesisBlock();
-    const data = [{ data: "blodk_data" }];
-    const block = Block.mine(genesis_block, data);
-    assert(block.data === data, "TestBlockIsValid failed");
+    //const data = [{ data: "blodk_data" }];
+    const tx = new Transaction(
+      new Wallet(new Blockchain()),
+      "receipt",
+      1,
+      undefined,
+      undefined
+    );
+    const block = Block.mine(genesis_block, [tx]);
+    assert(block.data[0] === tx, "TestBlockIsValid failed");
     const hash = crypto_hash(
       block.timestamp,
       genesis_block.hash,
-      data,
+      tx.txOutput,
       block.difficulty,
       block.nonce
     );

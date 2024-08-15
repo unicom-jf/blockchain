@@ -160,6 +160,9 @@ class Transaction {
   public get txOutput() {
     return this._txOutput;
   }
+  public get id() {
+    return this._id;
+  }
 }
 
 export { Transaction, TxInput };

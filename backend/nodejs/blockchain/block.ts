@@ -6,6 +6,7 @@ const GENESIS_DATA = {
 import { crypto_hash } from "../utils/crypto_hash";
 import { hex_to_binary } from "../utils/hex_to_binary";
 import { MINE_RATE } from "../config";
+import { Transaction } from "../wallet/transaction";
 const GENESIS_BLOCK: Block = {
   timestamp: 0,
   lastHash: "last_hash",
@@ -18,7 +19,7 @@ class Block {
   timestamp!: number;
   lastHash: string;
   hash!: string;
-  data!: any[];
+  data!: Transaction[];
   difficulty!: number;
   nonce!: number;
 
