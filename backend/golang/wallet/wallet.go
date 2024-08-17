@@ -6,6 +6,11 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
+	"fmt"
+
+	//"slices"
+
 	//"fmt"
 
 	"github.com/google/uuid"
@@ -64,13 +69,13 @@ func (wallet Wallet)Balance() uint64 {
 	return Balance(wallet.Blockchain, wallet.Address)
 }
 
-func NewWallet() (*Wallet, error){
+func NewWallet() (Wallet, error){
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		return nil, err
+		return Wallet{}, err
 	}
-	return &Wallet{
-		blockchain.Blockchain {},
+	return Wallet{
+		blockchain.NewBlockchain(),
 		uuid.New().String()[0:8],
 		privateKey,
 		privateKey.PublicKey,
@@ -82,10 +87,57 @@ func NewWallet() (*Wallet, error){
 func Verify(public_key rsa.PublicKey, data []byte, signature []byte) error {
 	msgHash := sha256.New()
 	_, err := msgHash.Write(data)
+	msg := "invalid-tx:"
 	if err != nil {
-		return err
+		fmt.Sprintf("%s %s", msg, err.Error())
+		return errors.New(msg)
 	}
 	msgHashSum := msgHash.Sum(nil)
 	err = rsa.VerifyPSS(&public_key, crypto.SHA256, msgHashSum, signature, nil)
-	return err
+	if err != nil {
+		fmt.Sprintf("%s %s", msg, err.Error())
+		return errors.New(msg)
+	}
+	return nil
+}
+
+
+func ValidTxChain(chain []blockchain.Block) error {
+	txIds := make(map[string]int)
+	for idx, block := range chain {
+		foundReward := false
+		for _, buf := range block.Data {
+			var tx Transaction
+			err := json.Unmarshal(buf, &tx)
+			if err != nil {
+				return err
+			}
+			_, ok := txIds[tx.Id]
+			if ok {
+				return errors.New("tx is not unique")
+			}
+			txIds[tx.Id] = 1
+
+			if tx.TxInput.Address == utils.MiningRewardInput {
+				if foundReward {
+					return errors.New("one mining reward per block")
+				} else {
+					foundReward = true
+				}
+			} else {
+				historic_blockchain := blockchain.NewBlockchain()
+				historic_blockchain.Chain = chain[0:idx]
+				historic_balance := Balance(historic_blockchain, tx.TxInput.Address)
+				if historic_balance != tx.TxInput.Amount {
+					msg := fmt.Sprintf("tx: %s has an invalid input amount", tx.Id)
+					return errors.New(msg)
+				}
+				err = ValidTx(tx)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
 }

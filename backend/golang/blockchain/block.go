@@ -21,6 +21,7 @@ type Block struct {
 	Nonce int `json:"nonce"`
 }
 
+
 func GenesisBlock() Block {
 	return Block{
 		Timestamp: 0, //milli seconds

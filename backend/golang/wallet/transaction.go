@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -76,18 +77,19 @@ func ValidTx(tx Transaction) error {
 
 	if tx.TxInput.Address == utils.MiningRewardInput {
 		if total != uint64(utils.MiningReward) {
-			return errors.New("invalid mining reward")
+			return errors.New("invalid-tx:invalid mining reward")
 		}
 		return nil
 	}
 
 	if tx.TxInput.Amount != total {
-		return errors.New("invalid output values")
+		return errors.New("invalid-tx:invalid output values")
 	}
 
 	data, err := json.Marshal(tx.TxOutput)
 	if err != nil {
-		return err
+		msg := fmt.Sprintf("invalid-tx: %s", err.Error())
+		return errors.New(msg)
 	}
 	// sig, err := hex.DecodeString(tx.TxInput.Signature)
 	// if err != nil {

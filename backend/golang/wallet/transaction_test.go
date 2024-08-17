@@ -9,13 +9,13 @@ import (
 
 func TestValidTx(t *testing.T) {
 	wallet, _ := NewWallet()
-	tx, _ := NewRewardTx(*wallet)
+	tx, _ := NewRewardTx(wallet)
 	err := ValidTx(tx)
 	if err != nil {
 		t.Error(err)
 	}
 
-	tx, err = NewTx(*wallet, "test-recipient", 20)
+	tx, err = NewTx(wallet, "test-recipient", 20)
 	if err != nil {
 		t.Error(err)
 	}
@@ -42,7 +42,7 @@ func TestOnchain(t *testing.T) {
 		t.Error("wallet's chain is empty")
 	}
 
-	tx, err := NewRewardTx(*wallet)
+	tx, err := NewRewardTx(wallet)
 	if err != nil {
 		t.Error(err)
 	}
@@ -62,7 +62,7 @@ func TestOnchain(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	tx2, err := NewTx(*wallet, wallet2.Address, 100)
+	tx2, err := NewTx(wallet, wallet2.Address, 100)
 	if err != nil {
 		t.Error(err)
 	}
