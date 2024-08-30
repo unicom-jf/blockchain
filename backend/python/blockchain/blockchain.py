@@ -40,7 +40,7 @@ class Blockchain:
     return list(map(lambda block: block.to_json(), self.chain))
 
   @staticmethod
-  def from_json(self, json_blocks):
+  def from_json(json_blocks):
     """
     Deserialize a blockchain from a list of json_blocks
     """

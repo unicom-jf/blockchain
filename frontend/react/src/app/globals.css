@@ -31,3 +31,12 @@ body {
     text-wrap: balance;
   }
 }
+
+.NavBar {
+  display: flex;
+  align-items: center;
+}
+
+.LinkBlock {
+  margin-left: 30px;
+}
