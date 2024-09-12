@@ -13,17 +13,26 @@ export default function App() {
     balance: BigInt(0),
   });
 
+  const [serverInfo, setServerInfo] = useState({
+    info: "",
+  });
+
   useEffect(() => {
     fetch(`${API_BASE_URL}/wallet/info`)
       .then((response) => response.json())
       .then((json) => setWalletInfo(json));
+
+    fetch(`${API_BASE_URL}/`)
+      .then((response) => response.json())
+      .then((json) => setServerInfo(json));
   }, []);
 
   const { address, balance } = walletInfo;
+  const { info } = serverInfo;
 
   return (
     <div className="App">
-      <h3>Welcome to pychain</h3>
+      <h3>Welcome to pychain, {info} </h3>
       <br />
       <div className="NavBar">
         <Link className="LinkBlock" href="/blockchain">
