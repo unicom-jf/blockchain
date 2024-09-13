@@ -166,7 +166,7 @@ class Transaction {
 }
 
 export { Transaction, TxInput };
-
+/*
 function test() {
   const blockchain = new Blockchain();
   const wallet = new Wallet(blockchain);
@@ -185,22 +185,23 @@ function test2() {
   const wallet = new Wallet(blockchain);
   const rewardTx = Transaction.rewardTransaction(wallet);
   console.log("rewardTx: ", rewardTx);
-  /*
-  wallet = Wallet()
-  wallet.blockchain = blockchain
-  print(f'balance: {wallet.balance}')
-  tx = Transaction.reward_tx(wallet)
-  #reward_block = Block.mine_block(wallet.blockchain.chain[-1], tx.to_json())
-  wallet.blockchain.add_block([tx.to_json()])
-  print(f'balance with rewarding: {wallet.balance}')
-  client_wallet = Wallet()
-  tx = Transaction(client_wallet, wallet.address, 123)
-  wallet.blockchain.add_block([tx.to_json()])
-  print(f'balance with transfer: {wallet.balance}')
+  
+  // wallet = Wallet()
+  // wallet.blockchain = blockchain
+  // print(f'balance: {wallet.balance}')
+  // tx = Transaction.reward_tx(wallet)
+  // #reward_block = Block.mine_block(wallet.blockchain.chain[-1], tx.to_json())
+  // wallet.blockchain.add_block([tx.to_json()])
+  // print(f'balance with rewarding: {wallet.balance}')
+  // client_wallet = Wallet()
+  // tx = Transaction(client_wallet, wallet.address, 123)
+  // wallet.blockchain.add_block([tx.to_json()])
+  // print(f'balance with transfer: {wallet.balance}')
 
-  tx = Transaction(wallet, client_wallet.address, 200)
-  wallet.blockchain.add_block([tx.to_json()])
-  print(f'balance after payment: {wallet.balance}')
-  */
+  // tx = Transaction(wallet, client_wallet.address, 200)
+  // wallet.blockchain.add_block([tx.to_json()])
+  // print(f'balance after payment: {wallet.balance}')
+  
 }
 test();
+*/
